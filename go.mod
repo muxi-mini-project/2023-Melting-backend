@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-sql-driver/mysql v1.7.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/spf13/viper v1.14.0
 	gorm.io/driver/mysql v1.4.5

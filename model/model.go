@@ -1,11 +1,7 @@
 package model
 
-func GetUserAuth() {
-	//TODO
-}
-
-func GetSth(value *sth) {
-	pk, id := (*value).getKey()
+func GetSth(value sth) {
+	pk, id := (value).getKey()
 	DB.Find(&value, pk+" = ?", id)
 }
 

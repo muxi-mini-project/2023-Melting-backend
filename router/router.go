@@ -38,5 +38,4 @@ func Register(e *gin.Engine) {
 		project.GET("/", handler.Getproject) //获取项目信息 ok
 	}
 
-} //>w<
-//wo lai la
+} 

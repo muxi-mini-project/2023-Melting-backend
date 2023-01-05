@@ -51,7 +51,9 @@ CREATE TABLE if not exists`tags`(
 ##登录
 CREATE TABLE if not exists`auth`(
                                     `uid` int auto_increment,
+                                    `auth` varchar(100),
                                     `muxipass` int ,
+                                    `studentid` int,
                                     `description` varchar(100) not null,
                                     primary key(`uid`),
                                     constraint fkey foreign key(uid) references users (uid)

@@ -15,3 +15,6 @@ func (data *Tag) getKey() (string, int) {
 func (data *Question) getKey() (string, int) {
 	return "qid", int(data.Qid)
 }
+func (data *Auth) getKey() (string, int) {
+	return "uid", int(data.UID)
+}

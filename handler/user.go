@@ -8,9 +8,11 @@ import (
 )
 
 func UploadProfile(r *gin.Context) {
-	var data model.User
-	// TODO
-	r.ShouldBindJSON()
+	id := r.GetInt("userID")
+	data := model.User{
+		UID: int32(id),
+	}
+	model.UpdateSth(&data)
 }
 
 func UploadPhoto(r *gin.Context) {
@@ -22,8 +24,34 @@ func UploadPhoto(r *gin.Context) {
 }
 
 func GetUserInfo(r *gin.Context) {
-	token, err := r.Cookie("token")
-	if err != nil {
-		//TODO go to the auth middleware
+	id := r.GetInt("userID")
+	data := model.User{
+		UID: int32(id),
 	}
+	model.GetSth(&data)
+	r.JSON(200, data)
+}
+
+func Updraft(r *gin.Context) {
+
+}
+
+func Getdraft(r *gin.Context) {
+
+}
+
+func Getproject(r *gin.Context) {
+
+}
+
+func Upproject(r *gin.Context) {
+
+}
+
+func Getprojects(r *gin.Context) {
+
+}
+
+func Uptables(r *gin.Context) {
+
 }
