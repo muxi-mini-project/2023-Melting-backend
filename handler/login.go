@@ -23,19 +23,11 @@ func Login(r *gin.Context) {
 func NativeLogin(r *gin.Context) {
 	var loginAuth model.Auth
 	r.ShouldBindJSON(&loginAuth)
-	s := loginAuth.Auth
-	model.GetSth(&loginAuth)
-	if s == loginAuth.Auth {
-		t, err := service.Newtoken(int(loginAuth.UID))
-		if err != nil {
-			r.JSON(500, err)
-		} else {
-			r.JSON(200, gin.H{
-				"code":  200,
-				"token": t,
-			})
-		}
-	} else {
-		r.String(403, "Wrong username or password")
+	token, err := service.Login(loginAuth)
+	if err != nil {
+		SendError(r, err, nil,
+			model.ErrorSender()+err.Error(), 403)
+		return
 	}
+	SendResponse(r,nil,)
 }

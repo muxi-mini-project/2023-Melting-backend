@@ -11,3 +11,7 @@ type sth interface {
 	TableName() string
 	getKey() (string, int)
 }
+
+type LoginResponse struct{
+	token string
+}
