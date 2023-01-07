@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Response struct {
@@ -20,7 +19,7 @@ func SendResponse(c *gin.Context, err error, data interface{}) {
 	})
 }
 
-func SendBadRequest(c *gin.Context, err error, data interface{}, cause string, source string) {
+func SendBadRequest(c *gin.Context, err error, data interface{}, cause string) {
 	c.JSON(http.StatusBadRequest, Response{
 		Code:    403,
 		Message: cause + err.Error(),

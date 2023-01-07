@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"main/model"
+	"main/model/db"
 	"mime/multipart"
 	"strconv"
 
@@ -16,6 +17,7 @@ import (
 var conf model.QNconfig
 
 func Init() {
+	db.OpenDB()
 	viper.AddConfigPath("./conf")
 	viper.SetConfigName("config")
 	if err := viper.ReadInConfig(); err != nil {
@@ -29,7 +31,7 @@ func Init() {
 	}
 }
 
-func UploadProfilePhoto(id int, file multipart.File, size int64) error {
+func UploadProfilePhoto(id int, file multipart.File, size int64) (string, error) {
 	keyToOverwrite := strconv.Itoa(id) + ".jpg"
 	putPolicy := storage.PutPolicy{
 		Scope: fmt.Sprintf("%s:%s", conf.Bucket, keyToOverwrite),
@@ -47,7 +49,7 @@ func UploadProfilePhoto(id int, file multipart.File, size int64) error {
 
 	if err := formUploader.Put(context.Background(), &ret,
 		upToken, keyToOverwrite, file, size, nil); err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return conf.Domain + "/" + ret.Key, nil
 }

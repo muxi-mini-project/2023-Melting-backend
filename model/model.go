@@ -1,28 +1,40 @@
 package model
 
+import (
+	"main/model/db"
+)
 
-//GetSth is used to get something from database.
-//The "something" must fulfilled interface "sth", which has method "TableName" and "getKey".
-func GetSth(value sth) {
-	pk, id := (value).getKey()
-	DB.Find(&value, pk+" = ?", id)
+// TODO Not working
+// GetSth is used to get something from database.
+// The "something" must fulfil interface "sth", which has method "TableName" and "GetKey".
+func GetSth[T sth](value T) T {
+	pk, id := value.GetKey()
+	db.DB.Find(&value, pk+" = ?", id)
+	return value
 }
 
-func UpdateSth(value sth) {
-	pk, id := value.getKey()
-	DB.Table(value.TableName()).Updates(value).Where(pk+" = ?", id)
+func GetFromUsers(value db.User) db.User {
+	db.DB.Table(db.TableNameUser).Find(&value, "nick_name = ?", value.NickName)
+	return value
 }
 
-func CreateSth(value sth) {
-	DB.Table(value.TableName()).Create(value)
+func UpdateSth[T sth](value T) {
+	pk, id := value.GetKey()
+	db.DB.Table(value.TableName()).Updates(value).Where(pk+" = ?", id)
 }
 
-func DeleteSth(value sth) {
-	DB.Table(value.TableName()).Delete(&value)
+func CreateSth[T sth](value T) {
+	var x = new(T) // <- Used to fix nil pointer panic.
+	*x = value     //	Don't touch it.
+	db.DB.Table(value.TableName()).Create(x)
 }
 
-func GetProposals(uid int)([]ProposalInfo,int){
-	data := make([]ProposalInfo,100)
-	result:=DB.Table(TableNameProposalInfo).Where("uid = ?",uid).Scan(data)
-	return data,int(result.RowsAffected)
+func DeleteSth[T sth](value T) {
+	db.DB.Table(value.TableName()).Delete(&value)
+}
+
+func GetProposals(uid int) ([]db.ProposalInfo, int) {
+	data := make([]db.ProposalInfo, 100)
+	result := db.DB.Table(db.TableNameProposalInfo).Where("uid = ?", uid).Scan(data)
+	return data, int(result.RowsAffected)
 }

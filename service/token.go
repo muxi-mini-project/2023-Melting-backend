@@ -1,6 +1,7 @@
 package service
 
 import (
+	"main/model"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -43,17 +44,15 @@ func Parsetoken(tokenString string) (*jwt.Token, *Myclaims, error) {
 func GetToken(r *gin.Context) {
 	tokenString := r.GetHeader("Authorization")
 	if tokenString == "" {
-		r.Abort()
+		r.AbortWithError(403, model.ErrAuthInvalid)
 		return
 	}
 	token, claims, err := Parsetoken(tokenString)
 	if err != nil || !token.Valid {
-
-		r.Abort()
+		r.AbortWithError(403, model.ErrAuthInvalid)
 		return
 	}
 	r.Set("userID", claims.UID)
 	r.Set("expiresAt", claims.ExpiresAt)
 	r.Next()
 }
-
