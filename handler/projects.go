@@ -1,19 +1,24 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"main/model"
 	"main/model/db"
 	"net/http"
 	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Getprojects godoc
-// @Summary Get one's projects
-// @Description Get all the projects from user(login required)
-// @Produce json
-// @Success 200 {object} db.ProposalInfo
-// @Router /api/v1/myproject [get]
+//  TODO
+//	@Summary		Get one's projects
+//	@Tags			dev   
+//	@Description	Get all the projects from user(login required)
+//	@Produce		json
+//	@Param			token	header		string	true	"token"
+//	@Success		200		{object}	db.ProposalInfo
+//	@Router			/api/v1/users/myproject [get]
 func Getprojects(r *gin.Context) {
 	id := r.GetInt("userID")
 	data, _ := model.GetProposals(id)
@@ -21,18 +26,21 @@ func Getprojects(r *gin.Context) {
 }
 
 // Getproject godoc
-// @Summary Get a project
-// @Description Get a project with its id
-// @Param id query string true "the id of the project"
-// @Produce json
-// @Success 200 {object} db.ProposalInfo
-// @Failure 404 {object} handler.Response
-// @Router /api/v1/project [get]
+//  test pass
+//	@Summary		Get a project
+//	@Description	Get a project with its id
+//	@Param			id		query	string	true	"the id of the project"
+//	@Param			token	header	string	true	"token"
+//	@Produce		json
+//	@Success		200	{object}	db.ProposalInfo
+//	@Failure		404	{object}	handler.Response
+//	@Router			/api/v1/project [get]
 func Getproject(r *gin.Context) {
 	q := r.Query("InfoID")
 	id, err := strconv.Atoi(q)
 	if err != nil {
 		SendError(r, err, nil, model.ErrorSender(), http.StatusNotFound)
+		return
 	}
 	data := db.ProposalInfo{
 		InfoID: int32(id),
@@ -42,13 +50,15 @@ func Getproject(r *gin.Context) {
 }
 
 // UpdateProject godoc
-// @Summary Update one's project
-// @Description Update user's project(login required)
-// @Param id query string true "the id of the project"
-// @Param token header string true "token"
-// @Produce json
-// @Success 200 {object} json
-// @Router /api/v1/project [post]
+//
+//	@Summary		Update one's project
+//	@Description	Update user's project(login required)
+//	@Param			id			query		string	true	"the id of the project"
+//	@Param			token		header		string	true	"token"
+//	@Param			newproject	formData	object	true	"operating project"
+//	@Produce		json
+//	@Success		200	{object}	handler.Response
+//	@Router			/api/v1/project [post]
 func UpdateProject(r *gin.Context) {
 	sid := r.Query("id")
 	if sid == "" {
@@ -71,13 +81,15 @@ func UpdateProject(r *gin.Context) {
 }
 
 // GetTemplate godoc
-// @Summary Get a templte
-// @Description Get a template with its id
-// @Param id query string true "the id of the template"
-// @Produce json
-// @Success 200 {object} db.Template
-// @Failure 404 {object} handler.Response
-// @Router /api/v1/project/template [get]
+//  tested
+//	@Summary		Get a templte
+//	@Description	Get a template with its id
+//	@Param			id		query	string	true	"the id of the template"
+//	@Param			token	header	string	true	"token"
+//	@Produce		json
+//	@Success		200	{object}	db.Template
+//	@Failure		404	{object}	handler.Response
+//	@Router			/api/v1/project/template [get]
 func GetTemplate(r *gin.Context) {
 	id, err := strconv.Atoi(r.Query("id"))
 	if err != nil || id == 0 {
@@ -85,5 +97,29 @@ func GetTemplate(r *gin.Context) {
 	}
 	data := db.Template{Temid: int32(id)}
 	data = model.GetSth(data)
+	SendResponse(r, nil, data)
+}
+
+// CreateProject godoc
+//
+//	@Summary		Create a new project
+//	@Description	Create user's project(login required)
+//	@Param			token		header		string	true	"token"
+//	@Param			newproject	formData	object	true	"operating project"
+//	@Produce		json
+//	@Success		200	{object}	handler.Response
+//	@Router			/api/v1/newproject [post]
+func CreateProject(r *gin.Context) {
+	data := new(db.ProposalInfo)
+	r.ShouldBindJSON(&data)
+	data.UID = int32(r.GetInt("userID"))
+	data.Time = time.Now()
+	if data.Budget == "" {
+		data.Budget = "{}"
+	}
+	if data.Nodes == "" {
+		data.Nodes = "{}"
+	}
+	model.CreateSth(*data)
 	SendResponse(r, nil, data)
 }

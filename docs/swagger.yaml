@@ -1,0 +1,321 @@
+definitions:
+  Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  db.ProposalInfo:
+    properties:
+      aim:
+        description: 活动目的
+        type: string
+      budget:
+        description: 活动预算
+        type: string
+      department:
+        description: 部门
+        type: string
+      game:
+        description: 游戏项目
+        type: string
+      info_id:
+        description: 活动序号
+        type: integer
+      name:
+        description: 活动
+        type: string
+      nodes:
+        description: 项目环节
+        type: string
+      optional_tables:
+        description: 可选标签
+        type: string
+      place:
+        description: 活动位置
+        type: string
+      time:
+        description: 活动时间
+        type: string
+      uid:
+        type: integer
+    type: object
+  db.Template:
+    properties:
+      context:
+        type: string
+      name:
+        type: string
+      temid:
+        type: integer
+    type: object
+  db.User:
+    properties:
+      auth:
+        type: string
+      description:
+        type: string
+      muxipass:
+        type: integer
+      nick_name:
+        description: 最多七个汉字
+        type: string
+      photo:
+        description: 头像
+        type: string
+      position:
+        description: 职位
+        type: string
+      qq:
+        type: integer
+      studentid:
+        type: integer
+      tag:
+        description: 标签
+        type: string
+      uid:
+        description: 序号
+        type: integer
+    type: object
+info:
+  contact:
+    email: 3557695455@qq.com 2194028175@qq.com
+    name: hazardous waste & Cg1028
+  description: Backend system of Muxi_Melting
+  title: Melting API
+  version: "1.0"
+paths:
+  /api/v1/newproject:
+    post:
+      description: Create user's project(login required)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: operating project
+        in: formData
+        name: newproject
+        required: true
+        type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create a new project
+  /api/v1/project:
+    get:
+      description: Get a project with its id
+      parameters:
+      - description: the id of the project
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.ProposalInfo'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a project
+    post:
+      description: Update user's project(login required)
+      parameters:
+      - description: the id of the project
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: operating project
+        in: formData
+        name: newproject
+        required: true
+        type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update one's project
+  /api/v1/project/template:
+    get:
+      description: Get a template with its id
+      parameters:
+      - description: the id of the template
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Template'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a templte
+  /api/v1/users:
+    get:
+      description: Get User's info with its userID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get User's info
+    post:
+      consumes:
+      - application/json
+      description: upload sth with its UserID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: upload profile
+      tags:
+      - manipulate
+  /api/v1/users/myproject:
+    get:
+      description: Get all the projects from user(login required)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.ProposalInfo'
+      summary: Get one's projects
+      tags:
+      - dev
+  /api/v1/users/photo:
+    post:
+      consumes:
+      - multipart/form-data
+      description: upload photo with its UserID
+      parameters:
+      - description: the photo of the user
+        in: formData
+        name: file
+        required: true
+        type: object
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: upload photo
+      tags:
+      - manipulate
+  /login:
+    post:
+      description: login and return id&token
+      parameters:
+      - description: the User who is logining
+        in: formData
+        name: loginAuth
+        required: true
+        type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: id&token
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: native login
+  /register:
+    post:
+      description: create a new account with someway
+      parameters:
+      - description: the type of the register
+        in: query
+        name: type
+        type: string
+      - description: register data
+        in: body
+        name: data
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.User'
+      summary: register account
+schemes:
+- http
+swagger: "2.0"

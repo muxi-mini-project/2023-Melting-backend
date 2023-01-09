@@ -11,6 +11,7 @@ type Response struct {
 	Data    interface{} `json:"data"`
 } //@name Response
 
+//@Summary 
 func SendResponse(c *gin.Context, err error, data interface{}) {
 	c.JSON(http.StatusOK, Response{
 		Code:    200,

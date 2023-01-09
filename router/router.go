@@ -33,7 +33,8 @@ func Register(e *gin.Engine) {
 			project.GET("/", handler.Getproject)          //获取项目信息
 			project.POST("/", handler.UpdateProject)      //更新项目
 			project.GET("/template", handler.GetTemplate) //获取模板
-		}
+            project.POST("/newproject",handler.CreateProject) //新建项目
+			}  
 	}
 
 	/* projects := users.Group("/projects")

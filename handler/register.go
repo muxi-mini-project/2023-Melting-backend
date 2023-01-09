@@ -1,20 +1,23 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"main/model"
 	"main/model/db"
 	"main/service"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Register godoc
-// @Summary register account
-// @Description create a new account with someway
-// @Param type query string true "the type of the register"
-// @Produce json
-// @Success 200 {object} db.User
-// @Router /api/register [post]
+//
+//	@Summary		register account
+//	@Description	create a new account with someway
+//	@Param			type	query	string	false	"the type of the register"
+//	@Param			data	body	object	true	"register data"
+//	@Produce		json
+//	@Success		200	{object}	db.User
+//	@Router			/register [post]
 func Register(r *gin.Context) {
 	typ := r.Query("type")
 	var data db.User

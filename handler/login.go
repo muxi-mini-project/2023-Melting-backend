@@ -22,7 +22,14 @@ func Login(r *gin.Context) {
 		NativeLogin(r)
 	}
 }
-
+// NativeLogin godoc
+//	@Summary		native login
+//	@Description	login and return id&token
+//	@Param			loginAuth	formData	object	true	"the User who is logining"
+//	@Produce		json
+//	@Success		200	{object}	handler.Response	"id&token"
+//	@Failure		404	{object}	handler.Response
+//	@Router			/login [post]
 func NativeLogin(r *gin.Context) {
 	var loginAuth db.User
 	r.ShouldBindJSON(&loginAuth)
