@@ -23,7 +23,7 @@ import (
 func Getprojects(r *gin.Context) {
 	id := r.GetInt("userID")
 	data, _ := model.GetProposals(id)
-	r.JSON(200, data)
+	SendResponse(r,nil,data)
 }
 
 // Getproject godoc
@@ -40,7 +40,7 @@ func Getproject(r *gin.Context) {
 	q := r.Query("info_id")
 	id, err := strconv.Atoi(q)
 	if err != nil {
-		SendError(r, err, nil, model.ErrorSender(), http.StatusNotFound)
+		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
 		return
 	}
 	data := db.ProposalInfo{

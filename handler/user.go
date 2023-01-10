@@ -1,10 +1,12 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"main/model"
 	"main/model/db"
 	"main/service"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // UploadProfile godoc
@@ -40,15 +42,15 @@ func UploadPhoto(r *gin.Context) {
 	id := r.GetInt("userID")
 	H, err := r.FormFile("file")
 	if err != nil {
-		SendError(r, err, nil, model.ErrorSender(), 403)
+		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
 	}
 	file, err := H.Open() // Warning: file must be *.jpg
 	if err != nil {
-		SendError(r, err, nil, model.ErrorSender(), 403)
+		SendError(r, err, nil, model.ErrorSender(), http.StatusForbidden)
 	}
 	url, err := service.UploadProfilePhoto(id, file, H.Size)
 	if err != nil {
-		SendError(r, err, nil, model.ErrorSender(), 500)
+		SendError(r, err, nil, model.ErrorSender(), http.StatusInternalServerError)
 	}
 	var data = db.User{
 		UID: int32(id),

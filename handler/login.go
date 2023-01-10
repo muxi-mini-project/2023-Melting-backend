@@ -4,6 +4,7 @@ import (
 	"main/model"
 	"main/model/db"
 	"main/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,17 +39,17 @@ func NativeLogin(r *gin.Context) {
 	r.ShouldBindJSON(&loginAuth)
 	if loginAuth.Auth == "" || loginAuth.NickName == "" {
 		SendError(r, model.ErrAuthInvalid, nil,
-			model.ErrorSender(), 401)
+			model.ErrorSender(), http.StatusBadRequest)
 		return
 	}
 	token, err := service.LoginNative(loginAuth)
 	if err != nil {
 		SendError(r, err, nil,
-			model.ErrorSender(), 401)
+			model.ErrorSender(), http.StatusInternalServerError)
 		return
 	}
 	SendResponse(r, nil, model.LoginResponse{
-		Code:  200,
+		Code:  http.StatusAccepted,
 		ID:    int(loginAuth.UID),
 		Token: token,
 	})
