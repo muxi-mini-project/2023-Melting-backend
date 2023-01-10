@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   Response:
     properties:
@@ -79,28 +80,72 @@ definitions:
         description: 序号
         type: integer
     type: object
+  model.LoginRequest:
+    properties:
+      auth:
+        type: string
+      nick_name:
+        description: 最多七个汉字
+        type: string
+    type: object
+  model.LoginResponse:
+    properties:
+      code:
+        type: integer
+      id:
+        type: integer
+      token:
+        type: string
+    type: object
 info:
   contact:
     email: 3557695455@qq.com 2194028175@qq.com
-    name: hazardous waste & Cg1028
+    name: '@a48zhang & @Cg1028'
   description: Backend system of Muxi_Melting
   title: Melting API
   version: "1.0"
 paths:
-  /api/v1/newproject:
+  /login:
     post:
+      consumes:
+      - application/json
+      description: login and return id&token
+      parameters:
+      - description: the User who is logining
+        in: body
+        name: loginAuth
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LoginResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: native login
+  /newproject:
+    post:
+      consumes:
+      - application/json
       description: Create user's project(login required)
       parameters:
       - description: token
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: operating project
-        in: formData
+        in: body
         name: newproject
         required: true
-        type: object
+        schema:
+          type: object
       produces:
       - application/json
       responses:
@@ -109,18 +154,18 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: Create a new project
-  /api/v1/project:
+  /project:
     get:
       description: Get a project with its id
       parameters:
       - description: the id of the project
         in: query
-        name: id
+        name: info_id
         required: true
         type: string
       - description: token
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       produces:
@@ -135,7 +180,9 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: Get a project
-    post:
+    put:
+      consumes:
+      - application/json
       description: Update user's project(login required)
       parameters:
       - description: the id of the project
@@ -145,14 +192,15 @@ paths:
         type: string
       - description: token
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: operating project
-        in: formData
+        in: body
         name: newproject
         required: true
-        type: object
+        schema:
+          type: object
       produces:
       - application/json
       responses:
@@ -161,7 +209,7 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: Update one's project
-  /api/v1/project/template:
+  /project/template:
     get:
       description: Get a template with its id
       parameters:
@@ -172,7 +220,7 @@ paths:
         type: string
       - description: token
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       produces:
@@ -187,113 +235,6 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: Get a templte
-  /api/v1/users:
-    get:
-      description: Get User's info with its userID
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/db.User'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Response'
-      summary: Get User's info
-    post:
-      consumes:
-      - application/json
-      description: upload sth with its UserID
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: upload profile
-      tags:
-      - manipulate
-  /api/v1/users/myproject:
-    get:
-      description: Get all the projects from user(login required)
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/db.ProposalInfo'
-      summary: Get one's projects
-      tags:
-      - dev
-  /api/v1/users/photo:
-    post:
-      consumes:
-      - multipart/form-data
-      description: upload photo with its UserID
-      parameters:
-      - description: the photo of the user
-        in: formData
-        name: file
-        required: true
-        type: object
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: upload photo
-      tags:
-      - manipulate
-  /login:
-    post:
-      description: login and return id&token
-      parameters:
-      - description: the User who is logining
-        in: formData
-        name: loginAuth
-        required: true
-        type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: id&token
-          schema:
-            $ref: '#/definitions/Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Response'
-      summary: native login
   /register:
     post:
       description: create a new account with someway
@@ -316,6 +257,92 @@ paths:
           schema:
             $ref: '#/definitions/db.User'
       summary: register account
+  /users:
+    get:
+      description: Get User's info with its userID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get User's info
+    put:
+      consumes:
+      - application/json
+      description: upload sth with its UserID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: upload profile
+      tags:
+      - user
+  /users/myproject:
+    get:
+      description: Get all the projects from user(login required)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.ProposalInfo'
+      summary: Get one's projects
+      tags:
+      - dev
+  /users/photo:
+    put:
+      consumes:
+      - image/jpeg
+      description: upload photo with its UserID
+      parameters:
+      - description: the photo of the user
+        in: formData
+        name: file
+        required: true
+        type: object
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: upload photo
+      tags:
+      - user
 schemes:
 - http
 swagger: "2.0"

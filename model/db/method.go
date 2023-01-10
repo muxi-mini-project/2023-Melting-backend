@@ -19,3 +19,7 @@ func (data Question) GetKey() (string, int) {
 func (data Template) GetKey() (string, int) {
 	return "temid", int(data.Temid)
 }
+
+func (data Game) GetKey() (string, int) {
+	return "gameid", int(data.Gameid)
+}

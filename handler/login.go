@@ -22,25 +22,34 @@ func Login(r *gin.Context) {
 		NativeLogin(r)
 	}
 }
+
 // NativeLogin godoc
+//
 //	@Summary		native login
 //	@Description	login and return id&token
-//	@Param			loginAuth	formData	object	true	"the User who is logining"
+//	@Accept			application/json
+//	@Param			loginAuth	body	model.LoginRequest	true	"the User who is logining"
 //	@Produce		json
-//	@Success		200	{object}	handler.Response	"id&token"
+//	@Success		200	{object}	model.LoginResponse
 //	@Failure		404	{object}	handler.Response
 //	@Router			/login [post]
 func NativeLogin(r *gin.Context) {
-	var loginAuth db.User
+	loginAuth := db.User{}
 	r.ShouldBindJSON(&loginAuth)
+	if loginAuth.Auth == "" || loginAuth.NickName == "" {
+		SendError(r, model.ErrAuthInvalid, nil,
+			model.ErrorSender(), 401)
+		return
+	}
 	token, err := service.LoginNative(loginAuth)
 	if err != nil {
 		SendError(r, err, nil,
-			model.ErrorSender()+err.Error(), 403)
+			model.ErrorSender(), 401)
 		return
 	}
-	SendResponse(r, nil, gin.H{
-		"id":    loginAuth.UID,
-		"token": token,
+	SendResponse(r, nil, model.LoginResponse{
+		Code:  200,
+		ID:    int(loginAuth.UID),
+		Token: token,
 	})
 }

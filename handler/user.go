@@ -9,13 +9,13 @@ import (
 
 // UploadProfile godoc
 //	@Summary		upload profile
-//	@Tags			manipulate
+//	@Tags			user
 //	@Description	upload sth with its UserID
 //	@Accept			application/json
 //	@Produce		json
-//	@Param			token	header		string	true	"token"
+//	@Param			Authorization	header		string	true	"token"
 //	@Success		200		{string}	string
-//	@Router			/api/v1/users [post]
+//	@Router			/users [put]
 func UploadProfile(r *gin.Context) {
 	id := r.GetInt("userID")
 	data := db.User{
@@ -28,14 +28,14 @@ func UploadProfile(r *gin.Context) {
 
 // UploadPhoto godoc
 //	@Summary		upload photo
-//	@Tags			manipulate
+//	@Tags			user
 //	@Description	upload photo with its UserID
-//	@Accept			multipart/form-data
+//	@Accept			image/jpeg
 //	@Produce		json
 //	@Param			file	formData	object	true	"the photo of the user"
-//	@Param			token	header		string	true	"token"
+//	@Param			Authorization	header		string	true	"token"
 //	@Success		200		{object}	string
-//	@Router			/api/v1/users/photo [post]
+//	@Router			/users/photo [put]
 func UploadPhoto(r *gin.Context) {
 	id := r.GetInt("userID")
 	H, err := r.FormFile("file")
@@ -62,11 +62,11 @@ func UploadPhoto(r *gin.Context) {
 // GetUserInfo godoc
 //	@Summary		Get User's info
 //	@Description	Get User's info with its userID
-//	@Param			token	header	string	true	"token"
+//	@Param			Authorization	header	string	true	"token"
 //	@Produce		json
 //	@Success		200	{object}	db.User
 //	@Failure		404	{object}	handler.Response
-//	@Router			/api/v1/users [get]
+//	@Router			/users [get]
 func GetUserInfo(r *gin.Context) {
 	id := r.GetInt("userID")
 	data := db.User{
@@ -78,14 +78,3 @@ func GetUserInfo(r *gin.Context) {
 	})
 }
 
-// TODO
-func Uptables(r *gin.Context) {
-	id := r.GetInt("InfoID")
-	tables := r.GetString("tables")
-	data := db.ProposalInfo{
-		InfoID:         int32(id),
-		OptionalTables: string(tables),
-	}
-	data = model.GetSth(data)
-	r.JSON(200, "ok")
-}

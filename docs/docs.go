@@ -11,7 +11,7 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "hazardous waste \u0026 Cg1028",
+            "name": "@a48zhang \u0026 @Cg1028",
             "email": "3557695455@qq.com 2194028175@qq.com"
         },
         "version": "{{.Version}}"
@@ -19,9 +19,49 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/newproject": {
+        "/login": {
+            "post": {
+                "description": "login and return id\u0026token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "native login",
+                "parameters": [
+                    {
+                        "description": "the User who is logining",
+                        "name": "loginAuth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LoginResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/newproject": {
             "post": {
                 "description": "Create user's project(login required)",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -30,16 +70,18 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "type": "object",
                         "description": "operating project",
                         "name": "newproject",
-                        "in": "formData",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
                     }
                 ],
                 "responses": {
@@ -52,7 +94,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/project": {
+        "/project": {
             "get": {
                 "description": "Get a project with its id",
                 "produces": [
@@ -63,14 +105,14 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "the id of the project",
-                        "name": "id",
+                        "name": "info_id",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -90,8 +132,11 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "description": "Update user's project(login required)",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -107,16 +152,18 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "type": "object",
                         "description": "operating project",
                         "name": "newproject",
-                        "in": "formData",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
                     }
                 ],
                 "responses": {
@@ -129,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/project/template": {
+        "/project/template": {
             "get": {
                 "description": "Get a template with its id",
                 "produces": [
@@ -147,7 +194,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "token",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -157,168 +204,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/db.Template"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users": {
-            "get": {
-                "description": "Get User's info with its userID",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get User's info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/db.User"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "upload sth with its UserID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "manipulate"
-                ],
-                "summary": "upload profile",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/myproject": {
-            "get": {
-                "description": "Get all the projects from user(login required)",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dev"
-                ],
-                "summary": "Get one's projects",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/db.ProposalInfo"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/photo": {
-            "post": {
-                "description": "upload photo with its UserID",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "manipulate"
-                ],
-                "summary": "upload photo",
-                "parameters": [
-                    {
-                        "type": "object",
-                        "description": "the photo of the user",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "description": "login and return id\u0026token",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "native login",
-                "parameters": [
-                    {
-                        "type": "object",
-                        "description": "the User who is logining",
-                        "name": "loginAuth",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "id\u0026token",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
                         }
                     },
                     "404": {
@@ -359,6 +244,136 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/db.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Get User's info with its userID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get User's info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.User"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "upload sth with its UserID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "upload profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/myproject": {
+            "get": {
+                "description": "Get all the projects from user(login required)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dev"
+                ],
+                "summary": "Get one's projects",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.ProposalInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/photo": {
+            "put": {
+                "description": "upload photo with its UserID",
+                "consumes": [
+                    "image/jpeg"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "upload photo",
+                "parameters": [
+                    {
+                        "type": "object",
+                        "description": "the photo of the user",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -479,6 +494,32 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "model.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "auth": {
+                    "type": "string"
+                },
+                "nick_name": {
+                    "description": "最多七个汉字",
+                    "type": "string"
+                }
+            }
+        },
+        "model.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -487,7 +528,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1",
 	Schemes:          []string{"http"},
 	Title:            "Melting API",
 	Description:      "Backend system of Muxi_Melting",

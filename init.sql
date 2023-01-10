@@ -58,3 +58,12 @@ CREATE TABLE if not exists`template`(
                                     primary key(`temid`)
 );
 
+##游戏
+CREATE TABLE if not exists `game`(
+                                    `gameid`int auto_increment,
+                                    `gamename`varchar(20) not null,
+                                    `venue`varchar(60) not null,
+                                    `time`varchar(40) not null,
+                                    `crowd`varchar(40) not null,
+                                    primary key(`gameid`)
+)
