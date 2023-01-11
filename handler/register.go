@@ -12,7 +12,7 @@ import (
 // Register godoc
 //
 //	@Summary		register account
-//	@Description	create a new account with someway
+//	@Description	create a new account in certain way
 //	@Param			type	query	string	false	"the type of the register"
 //	@Param			data	body	object	true	"register data"
 //	@Produce		json

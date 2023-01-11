@@ -16,7 +16,7 @@ import (
 //	@Accept			application/json
 //	@Produce		json
 //	@Param			Authorization	header		string	true	"token"
-//	@Success		200		{string}	string
+//	@Success		200				{string}	string
 //	@Router			/users [put]
 func UploadProfile(r *gin.Context) {
 	id := r.GetInt("userID")
@@ -34,9 +34,9 @@ func UploadProfile(r *gin.Context) {
 //	@Description	upload photo with its UserID
 //	@Accept			image/jpeg
 //	@Produce		json
-//	@Param			file	formData	object	true	"the photo of the user"
+//	@Param			file			formData	object	true	"the photo of the user"
 //	@Param			Authorization	header		string	true	"token"
-//	@Success		200		{object}	string
+//	@Success		200				{object}	string
 //	@Router			/users/photo [put]
 func UploadPhoto(r *gin.Context) {
 	id := r.GetInt("userID")

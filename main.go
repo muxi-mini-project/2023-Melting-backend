@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	_ "main/docs"
 	"main/router"
 	"main/service"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -18,9 +22,17 @@ import (
 //	@schemes		http
 //	@BasePath		/api/v1
 func main() {
+	logger()
 	service.Init()
 	r := gin.Default()
 	router.Register(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(":65000")
+	r.Run(":6500")
+}
+
+func logger() {
+	y, m, d := time.Now().Date()
+	target := fmt.Sprintf("./log/%v_%v_%v_%v.log", y, m, d, time.Now().Nanosecond())
+	f, _ := os.Create(target)
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
