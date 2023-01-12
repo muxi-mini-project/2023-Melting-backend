@@ -40,5 +40,5 @@ func Register(r *gin.Context) {
 		SendError(r, err, data, model.ErrorSender(), http.StatusForbidden)
 		return
 	}
-	SendResponse(r, nil, data)
+	SendResponse(r, data)
 }
