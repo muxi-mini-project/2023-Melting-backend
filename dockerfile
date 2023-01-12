@@ -1,4 +1,4 @@
-FROM golang-alpine
+FROM golang
 ENV GOPROXY=https://goproxy.cn
 RUN mkdir melting
 ADD  . /melting
