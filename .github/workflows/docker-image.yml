@@ -15,24 +15,19 @@ jobs:
     steps:
     - uses: actions/setup-go@v3.5.0
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file dockerfile --tag melting:$(date +%s)
     - name: Docker Login
       uses: docker/login-action@v2.1.0
       with:
           username: ${{secrets.DOCKERHUB_USERNAME}}
           password: ${{secrets.DOCKERHUB_TOKEN}}
 
-#创建镜像tag的hash值
-    - name: Add SHORT_SHA env property with commit short sha
-      run: |
-          echo "SHORT_SHA=`git rev-parse --short HEAD`" >> $GITHUB_ENV
-
     - name: Build and push
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3.2.0
       with:
+          file: dockerfile
+          context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/project:${{env.SHORT_SHA}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/melting:$(date +%s)
 
 
 
