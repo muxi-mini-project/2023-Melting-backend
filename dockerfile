@@ -1,4 +1,4 @@
-FROM golang
+FROM golang-alpine
 ENV GOPROXY=https://goproxy.cn
 RUN mkdir melting
 ADD  . /melting
@@ -8,4 +8,3 @@ RUN mkdir log
 RUN go mod tidy
 RUN go build main
 CMD ["./main"]
-EXPOSE 65000

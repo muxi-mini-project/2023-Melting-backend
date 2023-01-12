@@ -7,6 +7,7 @@ import (
 	"main/model"
 	"main/model/db"
 	"mime/multipart"
+	"os"
 	"strconv"
 
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
@@ -24,10 +25,10 @@ func Init() {
 		log.Fatal(err)
 	}
 	conf = model.QNconfig{
-		AccessKey: viper.GetString("oss.access_key"),
-		SecretKey: viper.GetString("oss.secret_key"),
-		Bucket:    viper.GetString("oss.bucket_name"),
-		Domain:    viper.GetString("oss.domain_name"),
+		AccessKey: os.Getenv("access_key"),
+		SecretKey: os.Getenv("secret_key"),
+		Bucket:    os.Getenv("bucket_name"),
+		Domain:    os.Getenv("domain_name"),
 	}
 }
 

@@ -124,7 +124,7 @@ func GetTemplate(r *gin.Context) {
 //	@Produce		json
 //	@Success		200	{object}	handler.Response
 //	@Failure		500	{object}	handler.Response
-//	@Router			/newproject [post]
+//	@Router			/project/newproject [post]
 func CreateProject(r *gin.Context) {
 	data := new(db.ProposalInfo)
 	r.ShouldBindJSON(&data)
