@@ -16,4 +16,4 @@ jobs:
     - uses: actions/setup-go@v3.5.0
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag melting:$(date +%s)
+      run: docker build . --file dockerfile --tag melting:$(date +%s)
