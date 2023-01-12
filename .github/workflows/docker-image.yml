@@ -20,7 +20,7 @@ jobs:
     - name: Docker Login
       uses: docker/login-action@v2.1.0
       with:
-          username: ${{secret.DOCKERHUB_TOKEN}}
+          username: ${{secrets.DOCKERHUB_TOKEN}}
 
 #创建镜像tag的hash值
     - name: Add SHORT_SHA env property with commit short sha
