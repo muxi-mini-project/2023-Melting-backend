@@ -23,10 +23,10 @@ import (
 func Getprojects(r *gin.Context) {
 	id := r.GetInt("userID")
 	data, _ := model.GetProposals(id)
-	SendResponse(r,nil,data)
+	SendResponse(r, data)
 }
 
-// Getproject godoc
+// GetProject godoc
 //
 //	@Summary		Get a project
 //	@Description	Get a project with its id
@@ -34,9 +34,9 @@ func Getprojects(r *gin.Context) {
 //	@Param			Authorization	header	string	true	"token"
 //	@Produce		json
 //	@Success		200	{object}	db.ProposalInfo
-//	@Failure		404	{object}	handler.Response
+//	@Failure		403	{object}	handler.Response
 //	@Router			/project [get]
-func Getproject(r *gin.Context) {
+func GetProject(r *gin.Context) {
 	q := r.Query("info_id")
 	id, err := strconv.Atoi(q)
 	if err != nil {
@@ -47,7 +47,7 @@ func Getproject(r *gin.Context) {
 		InfoID: int32(id),
 	}
 	data = model.GetSth(data)
-	SendResponse(r, nil, data)
+	SendResponse(r, data)
 }
 
 // UpdateProject godoc
@@ -57,9 +57,12 @@ func Getproject(r *gin.Context) {
 //	@Accept			application/json
 //	@Param			id				query	string	true	"the id of the project"
 //	@Param			Authorization	header	string	true	"token"
-//	@Param			newproject		body	object	true	"operating project"
+//	@Param			newproject		body	db.ProposalInfo	true	"operating project"
 //	@Produce		json
 //	@Success		200	{object}	handler.Response
+//	@Failure		500	{object}	handler.Response
+//	@Failure		403	{object}	handler.Response
+//	@Failure		401	{object}	handler.Response
 //	@Router			/project [put]
 func UpdateProject(r *gin.Context) {
 	sid := r.Query("id")
@@ -74,32 +77,41 @@ func UpdateProject(r *gin.Context) {
 	}
 	data = model.GetSth(data)
 	if data.UID != int32(uid) {
-		SendBadRequest(r, model.ErrNotAuthrized, nil, model.ErrorSender())
+		SendError(r, model.ErrNotAuthorized, nil, model.ErrorSender(), http.StatusUnauthorized)
 		return
 	}
-	r.ShouldBindJSON(&data)
-	model.UpdateSth(data)
-	SendResponse(r, nil, model.NoResponse)
+	err := r.ShouldBindJSON(&data)
+	if err != nil {
+		SendBadRequest(r, model.ErrBadRequest, data, model.ErrorSender())
+		return
+	}
+	err = model.UpdateSth(data)
+	if err != nil {
+		SendError(r, err, data, model.ErrorSender(), http.StatusInternalServerError)
+		return
+	}
+	SendResponse(r, model.NoResponse)
 }
 
 // GetTemplate godoc
 //
-//	@Summary		Get a templte
+//	@Summary		Get a template
 //	@Description	Get a template with its id
 //	@Param			id				query	string	true	"the id of the template"
 //	@Param			Authorization	header	string	true	"token"
 //	@Produce		json
 //	@Success		200	{object}	db.Template
-//	@Failure		404	{object}	handler.Response
+//	@Failure		403	{object}	handler.Response
 //	@Router			/project/template [get]
 func GetTemplate(r *gin.Context) {
 	id, err := strconv.Atoi(r.Query("id"))
 	if err != nil || id == 0 {
 		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
+		return
 	}
 	data := db.Template{Temid: int32(id)}
 	data = model.GetSth(data)
-	SendResponse(r, nil, data)
+	SendResponse(r, data)
 }
 
 // CreateProject godoc
@@ -111,6 +123,7 @@ func GetTemplate(r *gin.Context) {
 //	@Param			newproject		body	object	true	"operating project"
 //	@Produce		json
 //	@Success		200	{object}	handler.Response
+//	@Failure		500	{object}	handler.Response
 //	@Router			/newproject [post]
 func CreateProject(r *gin.Context) {
 	data := new(db.ProposalInfo)
@@ -123,8 +136,12 @@ func CreateProject(r *gin.Context) {
 	if data.Nodes == "" {
 		data.Nodes = "{}"
 	}
-	model.CreateSth(*data)
-	SendResponse(r, nil, data)
+	err := model.CreateSth(*data)
+	if err != nil {
+		SendError(r, err, data, model.ErrorSender(), http.StatusInternalServerError)
+		return
+	}
+	SendResponse(r, data)
 }
 
 func GameSelect(r *gin.Context) {
@@ -135,11 +152,11 @@ func GameSelect(r *gin.Context) {
 	//搜索
 	data := new(db.Game)
 	data.Gameid = int32(id)
-	SendResponse(r, nil, model.GetSth(*data))
+	SendResponse(r, model.GetSth(*data))
 }
 
 func FindGames(r *gin.Context) {
 	data := new(db.Game)
 	r.ShouldBindJSON(&data)
-	SendResponse(r, nil, model.GetGames(*data))
+	SendResponse(r, model.GetGames(*data))
 }

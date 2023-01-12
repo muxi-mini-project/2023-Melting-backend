@@ -44,7 +44,7 @@ var ErrNameOccupied = err{
 	Code: 403,
 	Typ:  "Username has been occupied",
 }
-var ErrNotAuthrized = err{
+var ErrNotAuthorized = err{
 	Code: 403,
 	Typ:  "Operation requires authentication",
 }

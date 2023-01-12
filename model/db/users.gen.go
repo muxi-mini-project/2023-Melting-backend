@@ -16,7 +16,7 @@ type User struct {
 	Auth        string `gorm:"column:auth" json:"auth"`
 	Muxipass    int32  `gorm:"column:muxipass" json:"muxipass"`
 	Studentid   int32  `gorm:"column:studentid" json:"studentid"`
-	Qq          int32  `gorm:"column:qq" json:"qq"`
+	Qq          string `gorm:"column:qq" json:"qq"`
 	Description string `gorm:"column:description;not null" json:"description"`
 }
 

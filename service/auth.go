@@ -5,7 +5,6 @@ import (
 	"main/model/db"
 )
 
-// Login with uid
 func LoginNative(data db.User) (string, error) {
 	// TODO Login auth should be Base64 encrypted
 	// s, err := B64Decode(data.Auth)
@@ -39,7 +38,10 @@ func CreateNative(data db.User) error {
 	if data.Auth == "" {
 		return model.ErrAuthInvalid
 	}
-	model.CreateSth(data)
+	err := model.CreateSth(data)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -52,6 +54,9 @@ func CreateWithQQ(data db.User) error {
 	if data.Auth == "" {
 		return model.ErrAuthInvalid
 	}
-	model.CreateSth(data)
+	err := model.CreateSth(data)
+	if err != nil {
+		return err
+	}
 	return nil
 }

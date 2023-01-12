@@ -12,7 +12,7 @@ CREATE TABLE if not exists`Users`(
                                      `auth` varchar(100),
                                      `muxipass` int ,
                                      `studentid` int,
-                                     `qq` int,
+                                     `qq` varchar(20),
                                      `description` varchar(100) not null,
                                      PRIMARY KEY (`uid`)
 );

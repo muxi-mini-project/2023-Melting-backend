@@ -11,8 +11,7 @@ type Response struct {
 	Data    interface{} `json:"data"`
 } //@name Response
 
-
-func SendResponse(c *gin.Context, err error, data interface{}) {
+func SendResponse(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, Response{
 		Code:    200,
 		Message: "OK",
@@ -31,7 +30,7 @@ func SendBadRequest(c *gin.Context, err error, data interface{}, cause string) {
 func SendError(c *gin.Context, err error, data interface{}, cause string, code int) {
 	c.JSON(code, Response{
 		Code:    code,
-		Message: cause + err.Error(),
+		Message: cause + " " + err.Error(),
 		Data:    data,
 	})
 }

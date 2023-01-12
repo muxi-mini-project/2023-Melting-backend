@@ -37,20 +37,3 @@ func Parsetoken(tokenString string) (*jwt.Token, *Myclaims, error) {
 	cl, _ := token.Claims.(*Myclaims)
 	return token, cl, err
 }
-
-/* // 获取并解析token，返回带在token中的UID
-func GetToken(r *gin.Context) {
-	tokenString := r.GetHeader("Authorization")
-	if tokenString == "" {
-		r.AbortWithError(403, model.ErrAuthInvalid)
-		return
-	}
-	token, claims, err := Parsetoken(tokenString)
-	if err != nil || !token.Valid {
-		r.AbortWithError(403, model.ErrAuthInvalid)
-		return
-	}
-	r.Set("userID", claims.UID)
-	r.Set("expiresAt", claims.ExpiresAt)
-	r.Next()
-} */

@@ -10,6 +10,7 @@ import (
 )
 
 // UploadProfile godoc
+//
 //	@Summary		upload profile
 //	@Tags			user
 //	@Description	upload sth with its UserID
@@ -17,18 +18,27 @@ import (
 //	@Produce		json
 //	@Param			Authorization	header		string	true	"token"
 //	@Success		200				{string}	string
+//	@Failure		500	{object}	handler.Response	"update failed"
 //	@Router			/users [put]
 func UploadProfile(r *gin.Context) {
 	id := r.GetInt("userID")
 	data := db.User{
 		UID: int32(id),
 	}
-	r.ShouldBindJSON(&data)
-	model.UpdateSth(data)
-	SendResponse(r, nil, model.NoResponse)
+	err := r.ShouldBindJSON(&data)
+	if err != nil {
+		SendError(r, err, data, model.ErrorSender(), http.StatusInternalServerError)
+		return
+	}
+	if err := model.UpdateSth(data); err != nil {
+		SendError(r, err, data, model.ErrorSender(), http.StatusInternalServerError)
+		return
+	}
+	SendResponse(r, model.NoResponse)
 }
 
 // UploadPhoto godoc
+//
 //	@Summary		upload photo
 //	@Tags			user
 //	@Description	upload photo with its UserID
@@ -37,6 +47,8 @@ func UploadProfile(r *gin.Context) {
 //	@Param			file			formData	object	true	"the photo of the user"
 //	@Param			Authorization	header		string	true	"token"
 //	@Success		200				{object}	string
+//	@Failure		400	{object}	handler.Response	"file not received"
+//	@Failure		500	{object}	handler.Response	"failed to upload file"
 //	@Router			/users/photo [put]
 func UploadPhoto(r *gin.Context) {
 	id := r.GetInt("userID")
@@ -46,7 +58,7 @@ func UploadPhoto(r *gin.Context) {
 	}
 	file, err := H.Open() // Warning: file must be *.jpg
 	if err != nil {
-		SendError(r, err, nil, model.ErrorSender(), http.StatusForbidden)
+		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
 	}
 	url, err := service.UploadProfilePhoto(id, file, H.Size)
 	if err != nil {
@@ -57,17 +69,20 @@ func UploadPhoto(r *gin.Context) {
 	}
 	data = model.GetSth(data)
 	data.Photo = url
-	model.UpdateSth(data)
-	SendResponse(r, nil, data)
+	err = model.UpdateSth(data)
+	if err != nil {
+		SendError(r, err, nil, model.ErrorSender(), http.StatusInternalServerError)
+	}
+	SendResponse(r, data)
 }
 
 // GetUserInfo godoc
+//
 //	@Summary		Get User's info
 //	@Description	Get User's info with its userID
 //	@Param			Authorization	header	string	true	"token"
 //	@Produce		json
 //	@Success		200	{object}	db.User
-//	@Failure		404	{object}	handler.Response
 //	@Router			/users [get]
 func GetUserInfo(r *gin.Context) {
 	id := r.GetInt("userID")
@@ -75,8 +90,5 @@ func GetUserInfo(r *gin.Context) {
 		UID: int32(id),
 	}
 	data = model.GetSth(data)
-	SendResponse(r, nil, gin.H{
-		"info": data,
-	})
+	SendResponse(r, data)
 }
-

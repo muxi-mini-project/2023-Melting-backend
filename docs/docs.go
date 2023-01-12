@@ -31,7 +31,7 @@ const docTemplate = `{
                 "summary": "native login",
                 "parameters": [
                     {
-                        "description": "the User who is logining",
+                        "description": "the User who is logging in",
                         "name": "loginAuth",
                         "in": "body",
                         "required": true,
@@ -47,8 +47,20 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.LoginResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "username or password incorrect",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "403": {
+                        "description": "param not satisfied",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "token generation failed",
                         "schema": {
                             "$ref": "#/definitions/Response"
                         }
@@ -217,7 +229,7 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "create a new account with someway",
+                "description": "create a new account in certain way",
                 "produces": [
                     "application/json"
                 ],
@@ -307,6 +319,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "500": {
+                        "description": "update failed",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
                     }
                 }
             }
@@ -374,6 +392,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "file not received",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "failed to upload file",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
                         }
                     }
                 }
@@ -480,7 +510,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "qq": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "studentid": {
                     "type": "integer"
@@ -521,7 +551,13 @@ const docTemplate = `{
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "description": "under developing",
+            "name": "dev"
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

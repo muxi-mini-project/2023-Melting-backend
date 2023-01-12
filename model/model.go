@@ -12,19 +12,22 @@ func GetSth[T sth](value T) T {
 	return value
 }
 
-func UpdateSth[T sth](value T) {
+func UpdateSth[T sth](value T) error {
 	pk, id := value.GetKey()
-	db.DB.Table(value.TableName()).Updates(value).Where(pk+" = ?", id)
+	result := db.DB.Table(value.TableName()).Updates(value).Where(pk+" = ?", id)
+	return result.Error
 }
 
-func CreateSth[T sth](value T) {
+func CreateSth[T sth](value T) error {
 	var x = new(T) // <- Used to fix nil pointer panic.
 	*x = value     //	Don't touch it.
-	db.DB.Table(value.TableName()).Create(x)
+	result := db.DB.Table(value.TableName()).Create(x)
+	return result.Error
 }
 
-func DeleteSth[T sth](value T) {
-	db.DB.Table(value.TableName()).Delete(&value)
+func DeleteSth[T sth](value T) error {
+	result := db.DB.Table(value.TableName()).Delete(&value)
+	return result.Error
 }
 
 func GetManySth[T sth](value T) ([]T, int) {

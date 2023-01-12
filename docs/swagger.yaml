@@ -70,7 +70,7 @@ definitions:
         description: 职位
         type: string
       qq:
-        type: integer
+        type: string
       studentid:
         type: integer
       tag:
@@ -111,7 +111,7 @@ paths:
       - application/json
       description: login and return id&token
       parameters:
-      - description: the User who is logining
+      - description: the User who is logging in
         in: body
         name: loginAuth
         required: true
@@ -124,8 +124,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.LoginResponse'
-        "404":
-          description: Not Found
+        "401":
+          description: username or password incorrect
+          schema:
+            $ref: '#/definitions/Response'
+        "403":
+          description: param not satisfied
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: token generation failed
           schema:
             $ref: '#/definitions/Response'
       summary: native login
@@ -237,7 +245,7 @@ paths:
       summary: Get a templte
   /register:
     post:
-      description: create a new account with someway
+      description: create a new account in certain way
       parameters:
       - description: the type of the register
         in: query
@@ -295,6 +303,10 @@ paths:
           description: OK
           schema:
             type: string
+        "500":
+          description: update failed
+          schema:
+            $ref: '#/definitions/Response'
       summary: upload profile
       tags:
       - user
@@ -340,9 +352,20 @@ paths:
           description: OK
           schema:
             type: string
+        "400":
+          description: file not received
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: failed to upload file
+          schema:
+            $ref: '#/definitions/Response'
       summary: upload photo
       tags:
       - user
 schemes:
 - http
 swagger: "2.0"
+tags:
+- description: under developing
+  name: dev
