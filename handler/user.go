@@ -17,8 +17,9 @@ import (
 //	@Accept			application/json
 //	@Produce		json
 //	@Param			Authorization	header		string	true	"token"
+//	@Param			Profile			body		db.User	true	"new user profile"
 //	@Success		200				{string}	string
-//	@Failure		500	{object}	handler.Response	"update failed"
+//	@Failure		500				{object}	handler.Response	"update failed"
 //	@Router			/users [put]
 func UploadProfile(r *gin.Context) {
 	id := r.GetInt("userID")
@@ -47,8 +48,8 @@ func UploadProfile(r *gin.Context) {
 //	@Param			file			formData	object	true	"the photo of the user"
 //	@Param			Authorization	header		string	true	"token"
 //	@Success		200				{object}	string
-//	@Failure		400	{object}	handler.Response	"file not received"
-//	@Failure		500	{object}	handler.Response	"failed to upload file"
+//	@Failure		400				{object}	handler.Response	"file not received"
+//	@Failure		500				{object}	handler.Response	"failed to upload file"
 //	@Router			/users/photo [put]
 func UploadPhoto(r *gin.Context) {
 	id := r.GetInt("userID")
@@ -79,6 +80,7 @@ func UploadPhoto(r *gin.Context) {
 // GetUserInfo godoc
 //
 //	@Summary		Get User's info
+//	@Tags			user
 //	@Description	Get User's info with its userID
 //	@Param			Authorization	header	string	true	"token"
 //	@Produce		json

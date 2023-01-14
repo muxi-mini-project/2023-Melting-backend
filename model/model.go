@@ -33,13 +33,13 @@ func DeleteSth[T sth](value T) error {
 func GetManySth[T sth](value T) ([]T, int) {
 	pk, id := value.GetKey()
 	data := make([]T, 100)
-	result := db.DB.Table(value.TableName()).Where(pk+" = ?", id).Scan(data)
+	result := db.DB.Table(value.TableName()).Where(pk+" = ?", id).Scan(&data)
 	return data, int(result.RowsAffected)
 }
 
 func GetProposals(uid int) ([]db.ProposalInfo, int) {
 	data := make([]db.ProposalInfo, 100)
-	result := db.DB.Table(db.TableNameProposalInfo).Where("uid = ?", uid).Scan(data)
+	result := db.DB.Table(db.TableNameProposalInfo).Where("uid = ?", uid).Scan(&data)
 	return data, int(result.RowsAffected)
 }
 

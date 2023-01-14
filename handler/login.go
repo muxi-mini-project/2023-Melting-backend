@@ -27,6 +27,7 @@ func Login(r *gin.Context) {
 // NativeLogin godoc
 //
 //	@Summary		native login
+//	@Tags			register and login
 //	@Description	login and return id&token
 //	@Accept			application/json
 //	@Param			loginAuth	body	model.LoginRequest	true	"the User who is logging in"

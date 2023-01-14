@@ -8,6 +8,19 @@ definitions:
       message:
         type: string
     type: object
+  db.Game:
+    properties:
+      crowd:
+        type: string
+      gameid:
+        type: integer
+      gamename:
+        type: string
+      time:
+        type: string
+      venue:
+        type: string
+    type: object
   db.ProposalInfo:
     properties:
       aim:
@@ -137,31 +150,8 @@ paths:
           schema:
             $ref: '#/definitions/Response'
       summary: native login
-  /newproject:
-    post:
-      consumes:
-      - application/json
-      description: Create user's project(login required)
-      parameters:
-      - description: token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: operating project
-        in: body
-        name: newproject
-        required: true
-        schema:
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Response'
-      summary: Create a new project
+      tags:
+      - register and login
   /project:
     get:
       description: Get a project with its id
@@ -183,11 +173,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/db.ProposalInfo'
-        "404":
-          description: Not Found
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/Response'
       summary: Get a project
+      tags:
+      - projects
     put:
       consumes:
       - application/json
@@ -208,7 +200,7 @@ paths:
         name: newproject
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/db.ProposalInfo'
       produces:
       - application/json
       responses:
@@ -216,7 +208,113 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
       summary: Update one's project
+      tags:
+      - projects
+  /project/games:
+    get:
+      consumes:
+      - application/json
+      description: Get a game's info by id
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: game_id
+        in: query
+        name: game_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a game's info
+      tags:
+      - projects
+  /project/games/find:
+    post:
+      consumes:
+      - application/json
+      description: Get some games' info with certain circumstances
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: game circumstances
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/db.Game'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get some games' info
+      tags:
+      - projects
+  /project/newproject:
+    post:
+      consumes:
+      - application/json
+      description: Create user's project(login required)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: operating project
+        in: body
+        name: newproject
+        required: true
+        schema:
+          $ref: '#/definitions/db.ProposalInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create a new project
+      tags:
+      - projects
   /project/template:
     get:
       description: Get a template with its id
@@ -238,11 +336,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/db.Template'
-        "404":
-          description: Not Found
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/Response'
-      summary: Get a templte
+      summary: Get a template
+      tags:
+      - deprecated
   /register:
     post:
       description: create a new account in certain way
@@ -256,7 +356,7 @@ paths:
         name: data
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/db.User'
       produces:
       - application/json
       responses:
@@ -264,7 +364,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/db.User'
+        "400":
+          description: param not satisfied
+          schema:
+            $ref: '#/definitions/Response'
       summary: register account
+      tags:
+      - register and login
   /users:
     get:
       description: Get User's info with its userID
@@ -281,11 +387,9 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/db.User'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Response'
       summary: Get User's info
+      tags:
+      - user
     put:
       consumes:
       - application/json
@@ -296,6 +400,12 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: new user profile
+        in: body
+        name: Profile
+        required: true
+        schema:
+          $ref: '#/definitions/db.User'
       produces:
       - application/json
       responses:
@@ -328,7 +438,7 @@ paths:
             $ref: '#/definitions/db.ProposalInfo'
       summary: Get one's projects
       tags:
-      - dev
+      - projects
   /users/photo:
     put:
       consumes:
@@ -366,6 +476,3 @@ paths:
 schemes:
 - http
 swagger: "2.0"
-tags:
-- description: under developing
-  name: dev
