@@ -12,11 +12,13 @@ import (
 // Register godoc
 //
 //	@Summary		register account
+//	@Tags			register and login
 //	@Description	create a new account in certain way
 //	@Param			type	query	string	false	"the type of the register"
-//	@Param			data	body	object	true	"register data"
+//	@Param			data	body	db.User	true	"register data"
 //	@Produce		json
 //	@Success		200	{object}	db.User
+//	@Failure		400	{object}	handler.Response	"param not satisfied"
 //	@Router			/register [post]
 func Register(r *gin.Context) {
 	typ := r.Query("type")

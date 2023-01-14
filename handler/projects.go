@@ -12,9 +12,8 @@ import (
 
 // Getprojects godoc
 //
-//	 TODO
 //	@Summary		Get one's projects
-//	@Tags			dev
+//	@Tags			projects
 //	@Description	Get all the projects from user(login required)
 //	@Produce		json
 //	@Param			Authorization	header		string	true	"token"
@@ -29,6 +28,7 @@ func Getprojects(r *gin.Context) {
 // GetProject godoc
 //
 //	@Summary		Get a project
+//	@Tags			projects
 //	@Description	Get a project with its id
 //	@Param			info_id			query	string	true	"the id of the project"
 //	@Param			Authorization	header	string	true	"token"
@@ -53,10 +53,11 @@ func GetProject(r *gin.Context) {
 // UpdateProject godoc
 //
 //	@Summary		Update one's project
+//	@Tags			projects
 //	@Description	Update user's project(login required)
 //	@Accept			application/json
-//	@Param			id				query	string	true	"the id of the project"
-//	@Param			Authorization	header	string	true	"token"
+//	@Param			id				query	string			true	"the id of the project"
+//	@Param			Authorization	header	string			true	"token"
 //	@Param			newproject		body	db.ProposalInfo	true	"operating project"
 //	@Produce		json
 //	@Success		200	{object}	handler.Response
@@ -96,6 +97,7 @@ func UpdateProject(r *gin.Context) {
 // GetTemplate godoc
 //
 //	@Summary		Get a template
+//	@Tags			deprecated
 //	@Description	Get a template with its id
 //	@Param			id				query	string	true	"the id of the template"
 //	@Param			Authorization	header	string	true	"token"
@@ -117,17 +119,22 @@ func GetTemplate(r *gin.Context) {
 // CreateProject godoc
 //
 //	@Summary		Create a new project
+//	@Tags			projects
 //	@Description	Create user's project(login required)
 //	@Accept			application/json
-//	@Param			Authorization	header	string	true	"token"
-//	@Param			newproject		body	object	true	"operating project"
+//	@Param			Authorization	header	string			true	"token"
+//	@Param			newproject		body	db.ProposalInfo	true	"operating project"
 //	@Produce		json
 //	@Success		200	{object}	handler.Response
-//	@Failure		500	{object}	handler.Response
+//	@Failure		400	{object}	handler.Response
 //	@Router			/project/newproject [post]
 func CreateProject(r *gin.Context) {
 	data := new(db.ProposalInfo)
-	r.ShouldBindJSON(&data)
+	err := r.ShouldBindJSON(&data)
+	if err != nil {
+		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
+		return
+	}
 	data.UID = int32(r.GetInt("userID"))
 	data.Time = time.Now()
 	if data.Budget == "" {
@@ -136,7 +143,7 @@ func CreateProject(r *gin.Context) {
 	if data.Nodes == "" {
 		data.Nodes = "{}"
 	}
-	err := model.CreateSth(*data)
+	err = model.CreateSth(*data)
 	if err != nil {
 		SendError(r, err, data, model.ErrorSender(), http.StatusInternalServerError)
 		return
@@ -144,19 +151,47 @@ func CreateProject(r *gin.Context) {
 	SendResponse(r, data)
 }
 
+// GameSelect godoc
+//
+//	@Summary		Get a game's info
+//	@Tags			projects
+//	@Description	Get a game's info by id
+//	@Accept			application/json
+//	@Param			Authorization	header	string	true	"token"
+//	@Param			game_id			query	string	true	"game_id"
+//	@Produce		json
+//	@Success		200	{object}	handler.Response
+//	@Failure		400	{object}	handler.Response
+//	@Router			/project/games [get]
 func GameSelect(r *gin.Context) {
 	id, err := strconv.Atoi(r.Query("game_id"))
 	if err != nil || id == 0 {
 		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
+		return
 	}
-	//搜索
 	data := new(db.Game)
 	data.Gameid = int32(id)
 	SendResponse(r, model.GetSth(*data))
 }
 
+// FindGames  godoc
+//
+//	@Summary		Get some games' info
+//	@Tags			projects
+//	@Description	Get some games' info with certain circumstances
+//	@Accept			application/json
+//	@Param			Authorization	header	string	true	"token"
+//	@Param			data			body	db.Game	true	"game circumstances"
+//	@Produce		json
+//	@Success		200	{object}	handler.Response
+//	@Failure		400	{object}	handler.Response
+//	@Router			/project/games/find [post]
 func FindGames(r *gin.Context) {
 	data := new(db.Game)
-	r.ShouldBindJSON(&data)
+	err := r.ShouldBindJSON(&data)
+	if err != nil {
+		SendError(r, err, nil, model.ErrorSender(), http.StatusBadRequest)
+		return
+	}
 	SendResponse(r, model.GetGames(*data))
 }
