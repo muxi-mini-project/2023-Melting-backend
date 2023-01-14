@@ -1,2 +1,5 @@
 conf/
 .idea/
+.vscode/
+todo
+log/*

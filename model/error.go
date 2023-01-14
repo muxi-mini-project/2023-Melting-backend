@@ -15,8 +15,8 @@ func (e err) Error() string {
 	return e.Typ
 }
 
-func ErrorSender()string{
-	pc,_,_,_:=runtime.Caller(1)
+func ErrorSender() string {
+	pc, _, _, _ := runtime.Caller(1)
 	return runtime.FuncForPC(pc).Name()
 }
 
@@ -25,7 +25,7 @@ func Debugger(skip int) (fileName string, funcName string, line int) {
 	fmt.Println(pc, file)
 	fileName = path.Base(file)
 	funcName = runtime.FuncForPC(pc).Name()
-	return fileName,funcName,line
+	return fileName, funcName, line
 }
 
 var ErrAuthIncorrect = err{
@@ -39,4 +39,12 @@ var ErrAuthInvalid = err{
 var ErrBadRequest = err{
 	Code: 400,
 	Typ:  "ErrBadRequest",
+}
+var ErrNameOccupied = err{
+	Code: 403,
+	Typ:  "Username has been occupied",
+}
+var ErrNotAuthorized = err{
+	Code: 403,
+	Typ:  "Operation requires authentication",
 }

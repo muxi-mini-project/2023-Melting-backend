@@ -3,7 +3,6 @@ package service
 import (
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -38,22 +37,3 @@ func Parsetoken(tokenString string) (*jwt.Token, *Myclaims, error) {
 	cl, _ := token.Claims.(*Myclaims)
 	return token, cl, err
 }
-
-// 获取并解析token，返回带在token中的UID
-func GetToken(r *gin.Context) {
-	tokenString := r.GetHeader("Authorization")
-	if tokenString == "" {
-		r.Abort()
-		return
-	}
-	token, claims, err := Parsetoken(tokenString)
-	if err != nil || !token.Valid {
-
-		r.Abort()
-		return
-	}
-	r.Set("userID", claims.UID)
-	r.Set("expiresAt", claims.ExpiresAt)
-	r.Next()
-}
-

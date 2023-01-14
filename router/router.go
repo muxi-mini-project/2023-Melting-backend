@@ -1,39 +1,42 @@
 package router
 
 import (
+	/* "html/template" 完美*/
 	"main/handler"
+	"main/router/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Register(e *gin.Engine) {
-
 	e.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "The incorrect API router.")
 	})
-	users := e.Group("/users")
-	{
-		users.POST("/login", handler.Login)    //登录 ok
-		users.GET("/", handler.GetUserInfo)    //获取用户信息 ok
-		users.POST("/", handler.UploadProfile) //上传更新 ok
-		
-	}
-	projects := users.Group("/projects")
-	{
-		projects.GET("/", handler.Getprojects) //获取项目信息 ok
-		projects.POST("/", handler.Upproject) //更新项目 ok
 
-	}
-	proshare := e.Group("/share")
+	v1 := e.Group("/api/v1")
 	{
-		proshare.GET("/", handler.Getproject)    //获取分享项目 ok
-		proshare.POST("/share", handler.Uptables) //上传“我”的信息 ok
-
+		v1.POST("/login", handler.Login)       // test pass
+		v1.POST("/register", handler.Register) // test pass
+		v1.Use(middleware.TokenParser)
+		users := v1.Group("/users")
+		{
+			users.GET("", handler.GetUserInfo)   //获取用户信息
+			users.PUT("", handler.UploadProfile) //上传更新
+			users.PUT("/photo", handler.UploadPhoto)
+			users.GET("/myproject", handler.Getprojects)
+		}
+		project := v1.Group("/project")
+		{
+			project.GET("", handler.GetProject)                //获取项目信息
+			project.PUT("", handler.UpdateProject)             //更新项目
+			project.GET("/template", handler.GetTemplate)      //获取模板
+			project.POST("/newproject", handler.CreateProject) //新建项目
+			games := project.Group("/games")
+			{
+				games.GET("", handler.GameSelect)
+				games.POST("/find", handler.FindGames)
+			}
+		}
 	}
-	project := users.Group("/project")
-	{
-		project.GET("/", handler.Getproject) //获取项目信息 ok
-	}
-
-} 
+}

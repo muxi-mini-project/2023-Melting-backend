@@ -1,10 +1,19 @@
-## modified 11:13 1/3/2022
+## modified 1/7/2022
 ##用户信息
+##由于开发主力过于迅猛，被迫作为监工的我在此留下标记。
+## ovo
+
 CREATE TABLE if not exists`Users`(
                                      `uid` INT AUTO_INCREMENT COMMENT '序号',
+                                     `photo` VARCHAR(200) COMMENT '头像',
                                      `nick_name` VARCHAR(14) DEFAULT '昵称' COMMENT '最多七个汉字',
                                      `position` VARCHAR (30) DEFAULT '职位' COMMENT '职位',
                                      `tag` VARCHAR(100) COMMENT '标签',
+                                     `auth` varchar(100),
+                                     `muxipass` int ,
+                                     `studentid` int,
+                                     `qq` varchar(20),
+                                     `description` varchar(100) not null,
                                      PRIMARY KEY (`uid`)
 );
 
@@ -18,19 +27,11 @@ CREATE TABLE if not exists `proposal_info` (
                                                `aim` VARCHAR(300) DEFAULT '活动目的' COMMENT '活动目的',
                                                `budget` json COMMENT '活动预算',## 以json list存储
                                                `optional_tables` VARCHAR(20) DEFAULT '可选标签' COMMENT '可选标签',
-                                               `uid` int,
-                                               PRIMARY KEY (`info_id`),
-                                               CONSTRAINT proposal_fkey FOREIGN KEY (`uid`) REFERENCES Users (uid)
-);
+                                                `uid` int,
+                                                `game` VARCHAR(400) DEFAULT '游戏项目' COMMENT '游戏项目',
+                                                `nodes` json COMMENT '项目环节',
+                                                PRIMARY KEY (`info_id`)
 
-##活动安排信息
-CREATE TABLE if not exists`proposal_arr`(
-                                            `arr_id` INT AUTO_INCREMENT,
-                                            `game` VARCHAR(400) DEFAULT '游戏项目' COMMENT '游戏项目',
-                                            `nodes` VARCHAR(400) DEFAULT '项目环节' COMMENT '项目环节',
-                                            PRIMARY KEY (`arr_id`),
-                                            `info_id` INT,
-                                            CONSTRAINT proposal_arr_fkey FOREIGN KEY (info_id) REFERENCES proposal_info (info_id)
 );
 
 ##游戏对应题库
@@ -48,13 +49,21 @@ CREATE TABLE if not exists`tags`(
                                     `description` varchar(100) not null,
                                     primary key(`tid`)
 );
-##登录
-CREATE TABLE if not exists`auth`(
-                                    `uid` int auto_increment,
-                                    `auth` varchar(100),
-                                    `muxipass` int ,
-                                    `studentid` int,
-                                    `description` varchar(100) not null,
-                                    primary key(`uid`),
-                                    constraint fkey foreign key(uid) references users (uid)
+
+##模板
+CREATE TABLE if not exists`template`(
+                                    `temid`int auto_increment,
+                                    `name`varchar(60) not null,
+                                    `context`varchar(400),
+                                    primary key(`temid`)
 );
+
+##游戏
+CREATE TABLE if not exists `game`(
+                                    `gameid`int auto_increment,
+                                    `gamename`varchar(20) not null,
+                                    `venue`varchar(60) not null,
+                                    `time`varchar(40) not null,
+                                    `crowd`varchar(40) not null,
+                                    primary key(`gameid`)
+)

@@ -1,0 +1,371 @@
+basePath: /api/v1
+definitions:
+  Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  db.ProposalInfo:
+    properties:
+      aim:
+        description: 活动目的
+        type: string
+      budget:
+        description: 活动预算
+        type: string
+      department:
+        description: 部门
+        type: string
+      game:
+        description: 游戏项目
+        type: string
+      info_id:
+        description: 活动序号
+        type: integer
+      name:
+        description: 活动
+        type: string
+      nodes:
+        description: 项目环节
+        type: string
+      optional_tables:
+        description: 可选标签
+        type: string
+      place:
+        description: 活动位置
+        type: string
+      time:
+        description: 活动时间
+        type: string
+      uid:
+        type: integer
+    type: object
+  db.Template:
+    properties:
+      context:
+        type: string
+      name:
+        type: string
+      temid:
+        type: integer
+    type: object
+  db.User:
+    properties:
+      auth:
+        type: string
+      description:
+        type: string
+      muxipass:
+        type: integer
+      nick_name:
+        description: 最多七个汉字
+        type: string
+      photo:
+        description: 头像
+        type: string
+      position:
+        description: 职位
+        type: string
+      qq:
+        type: string
+      studentid:
+        type: integer
+      tag:
+        description: 标签
+        type: string
+      uid:
+        description: 序号
+        type: integer
+    type: object
+  model.LoginRequest:
+    properties:
+      auth:
+        type: string
+      nick_name:
+        description: 最多七个汉字
+        type: string
+    type: object
+  model.LoginResponse:
+    properties:
+      code:
+        type: integer
+      id:
+        type: integer
+      token:
+        type: string
+    type: object
+info:
+  contact:
+    email: 3557695455@qq.com 2194028175@qq.com
+    name: '@a48zhang & @Cg1028'
+  description: Backend system of Muxi_Melting
+  title: Melting API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login and return id&token
+      parameters:
+      - description: the User who is logging in
+        in: body
+        name: loginAuth
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LoginResponse'
+        "401":
+          description: username or password incorrect
+          schema:
+            $ref: '#/definitions/Response'
+        "403":
+          description: param not satisfied
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: token generation failed
+          schema:
+            $ref: '#/definitions/Response'
+      summary: native login
+  /newproject:
+    post:
+      consumes:
+      - application/json
+      description: Create user's project(login required)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: operating project
+        in: body
+        name: newproject
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create a new project
+  /project:
+    get:
+      description: Get a project with its id
+      parameters:
+      - description: the id of the project
+        in: query
+        name: info_id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.ProposalInfo'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a project
+    put:
+      consumes:
+      - application/json
+      description: Update user's project(login required)
+      parameters:
+      - description: the id of the project
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: operating project
+        in: body
+        name: newproject
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update one's project
+  /project/template:
+    get:
+      description: Get a template with its id
+      parameters:
+      - description: the id of the template
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Template'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a templte
+  /register:
+    post:
+      description: create a new account in certain way
+      parameters:
+      - description: the type of the register
+        in: query
+        name: type
+        type: string
+      - description: register data
+        in: body
+        name: data
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.User'
+      summary: register account
+  /users:
+    get:
+      description: Get User's info with its userID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get User's info
+    put:
+      consumes:
+      - application/json
+      description: upload sth with its UserID
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: update failed
+          schema:
+            $ref: '#/definitions/Response'
+      summary: upload profile
+      tags:
+      - user
+  /users/myproject:
+    get:
+      description: Get all the projects from user(login required)
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.ProposalInfo'
+      summary: Get one's projects
+      tags:
+      - dev
+  /users/photo:
+    put:
+      consumes:
+      - image/jpeg
+      description: upload photo with its UserID
+      parameters:
+      - description: the photo of the user
+        in: formData
+        name: file
+        required: true
+        type: object
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: file not received
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: failed to upload file
+          schema:
+            $ref: '#/definitions/Response'
+      summary: upload photo
+      tags:
+      - user
+schemes:
+- http
+swagger: "2.0"
+tags:
+- description: under developing
+  name: dev

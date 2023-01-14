@@ -3,33 +3,29 @@ package service
 import (
 	"context"
 	"fmt"
-	"log"
 	"main/model"
+	"main/model/db"
 	"mime/multipart"
+	"os"
 	"strconv"
 
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
-	"github.com/spf13/viper"
 )
 
 var conf model.QNconfig
 
 func Init() {
-	viper.AddConfigPath("./conf")
-	viper.SetConfigName("config")
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal(err)
-	}
+	db.OpenDB()
 	conf = model.QNconfig{
-		AccessKey: viper.GetString("oss.access_key"),
-		SecretKey: viper.GetString("oss.secret_key"),
-		Bucket:    viper.GetString("oss.bucket_name"),
-		Domain:    viper.GetString("oss.domain_name"),
+		AccessKey: os.Getenv("access_key"),
+		SecretKey: os.Getenv("secret_key"),
+		Bucket:    os.Getenv("bucket_name"),
+		Domain:    os.Getenv("domain_name"),
 	}
 }
 
-func UploadProfilePhoto(id int, file multipart.File, size int64) error {
+func UploadProfilePhoto(id int, file multipart.File, size int64) (string, error) {
 	keyToOverwrite := strconv.Itoa(id) + ".jpg"
 	putPolicy := storage.PutPolicy{
 		Scope: fmt.Sprintf("%s:%s", conf.Bucket, keyToOverwrite),
@@ -47,7 +43,7 @@ func UploadProfilePhoto(id int, file multipart.File, size int64) error {
 
 	if err := formUploader.Put(context.Background(), &ret,
 		upToken, keyToOverwrite, file, size, nil); err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return conf.Domain + "/" + ret.Key, nil
 }

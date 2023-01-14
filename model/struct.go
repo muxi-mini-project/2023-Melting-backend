@@ -1,5 +1,7 @@
 package model
 
+import "main/model/db"
+
 type QNconfig struct {
 	AccessKey string
 	SecretKey string
@@ -8,10 +10,12 @@ type QNconfig struct {
 }
 
 type sth interface {
+	db.User | db.Template | db.ProposalInfo | db.Tag | db.Question | db.Game
 	TableName() string
-	getKey() (string, int)
+	GetKey() (string, int)
 }
 
-type LoginResponse struct{
-	token string
+type LoginRequest struct{
+	NickName    string `json:"nick_name"`        // 最多七个汉字
+	Auth        string `json:"auth"`
 }
